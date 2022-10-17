@@ -18,3 +18,5 @@ tools-used:
 
 ignore: 
     - README.md
+    - pkgmeta.yaml
+    - betterraidinfo_pic.jpg
