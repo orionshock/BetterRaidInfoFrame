@@ -5,4 +5,9 @@
 ## Notes: A better view of Raid Info / Saved Instances & Raids
 ## SavedVariables: BetterRaidInfoFrame_SV
 
+libs\LibStub.lua
+libs\CallbackHandler-1.0.lua
+libs\LibQTip-1.0.lua
+libs\LibDataBroker-1.1.lua
+
 BetterRaidInfoFrame.lua
