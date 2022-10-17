@@ -68,12 +68,13 @@ local function closeWindow()
 end
 
 local function populateTooltip(window)
+    window:SetHeaderFont(GameFontNormal)
     window:AddHeader(RAID_INFORMATION)
-    window:SetCell(1, 1, RAID_INFORMATION, nil, "CENTER", 4)
+    window:SetCell(1, 1, RAID_INFORMATION, nil, "LEFT", 4)
     window:SetCell(1, 6, "[X]", nil, "RIGHT")
     window:SetCellScript(1, 6, "OnMouseUp", closeWindow)
     window:AddLine(RAID_INFO_DESC, "2", "3", "4", "5")
-    window:SetCell(2, 1, RAID_INFO_DESC, nil, "LEFT", 5)
+    window:SetCell(2, 1, RAID_INFO_DESC, GameFontHighlightSmall, "LEFT", 5)
     window:SetColumnLayout(6, "LEFT", "CENTER", "CENTER", "CENTER", "CENTER", "RIGHT")
     window:AddHeader(INSTANCE, "Difficulty", RESETS_IN, "Encounters", "RaidID")
     for index, difficultyName in ipairs(savedInstance_TopLevelGroups) do
@@ -98,6 +99,7 @@ local function MakeAndPopulateQTip()
     RequestRaidInfo()
     populateTooltip(betterRaidInfoQTip)
     betterRaidInfoQTip:SetPoint("TOPLEFT", FriendsFrame, "TOPRIGHT")
+    betterRaidInfoQTip:UpdateScrolling(FriendsFrame:GetHeight())
     betterRaidInfoQTip:Show()
 end
 
@@ -112,3 +114,9 @@ function core.toggleBetterRaidInfoFrame(frame, button, ...)
         closeWindow()
     end
 end
+
+FriendsFrame:HookScript("OnHide", function(frame, ...)
+    if betterRaidInfoQTip and betterRaidInfoQTip:IsShown() then
+        closeWindow()
+    end
+end)
