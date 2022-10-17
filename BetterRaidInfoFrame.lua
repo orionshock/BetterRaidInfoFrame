@@ -115,8 +115,11 @@ function core.toggleBetterRaidInfoFrame(frame, button, ...)
     end
 end
 
-FriendsFrame:HookScript("OnHide", function(frame, ...)
-    if betterRaidInfoQTip and betterRaidInfoQTip:IsShown() then
-        closeWindow()
+FriendsFrame:HookScript(
+    "OnHide",
+    function(frame, ...)
+        if betterRaidInfoQTip and betterRaidInfoQTip:IsShown() then
+            closeWindow()
+        end
     end
-end)
+)
