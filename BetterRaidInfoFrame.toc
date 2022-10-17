@@ -1,0 +1,8 @@
+## Interface: 30400
+## Version: v0.1
+## Author: Orionshock#1149
+## Title: BetterRaidInfoFrame
+## Notes: A better view of Raid Info / Saved Instances & Raids
+## SavedVariables: BetterRaidInfoFrame_SV
+
+BetterRaidInfoFrame.lua
