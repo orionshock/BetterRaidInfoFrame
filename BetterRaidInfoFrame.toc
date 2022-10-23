@@ -1,5 +1,5 @@
 ## Interface: 30400
-## Version: v0.2
+## Version: v0.3
 ## Author: Orionshock#1149
 ## Title: BetterRaidInfoFrame
 ## Notes: A better view of Raid Info / Saved Instances & Raids

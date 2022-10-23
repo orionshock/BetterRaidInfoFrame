@@ -32,7 +32,19 @@ local function instanceSortByNameFunc(a, b)
     return a.name < b.name
 end
 local function difficultyNameSortFunc(a, b)
-    return a > b
+    if (type(a) == "string") and (type(b) == "string") then
+        if strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%a") then
+            return a < b
+        elseif strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%d") then
+            return true
+        elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%a") then
+            return false
+        elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%d") then
+            return false
+        end
+    end
+    print("bth not strings")
+    return a < b
 end
 
 function core:UPDATE_INSTANCE_INFO(event)
