@@ -33,17 +33,21 @@ local function instanceSortByNameFunc(a, b)
 end
 local function difficultyNameSortFunc(a, b)
     if (type(a) == "string") and (type(b) == "string") then
+        --Both Strings (unlikely) sort "A" > "B"
         if strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%a") then
             return a < b
+        --A is String and B is Number - Sort Letters over Numbers
         elseif strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%d") then
             return true
+        --A is Number and B is Letter, Sort letters over Numbers
         elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%a") then
             return false
+        --Both are Numbers, sort Low to High
         elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%d") then
-            return false
+            return a < b
         end
     end
-    print("bth not strings")
+
     return a < b
 end
 
