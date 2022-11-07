@@ -35,14 +35,14 @@ local function difficultyNameSortFunc(a, b)
     if (type(a) == "string") and (type(b) == "string") then
         --Both Strings (unlikely) sort "A" > "B"
         if strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%a") then
+            --A is String and B is Number - Sort Letters over Numbers
             return a < b
-        --A is String and B is Number - Sort Letters over Numbers
         elseif strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%d") then
+            --A is Number and B is Letter, Sort letters over Numbers
             return true
-        --A is Number and B is Letter, Sort letters over Numbers
         elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%a") then
+            --Both are Numbers, sort Low to High
             return false
-        --Both are Numbers, sort Low to High
         elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%d") then
             return a < b
         end
@@ -83,6 +83,8 @@ local function closeWindow()
     betterRaidInfoQTip = nil
 end
 
+local total_fmt_String = "%s Total: %d"
+
 local function populateTooltip(window)
     window:SetHeaderFont(GameFontNormal)
     window:AddHeader(RAID_INFORMATION)
@@ -101,6 +103,8 @@ local function populateTooltip(window)
         for dIndex, eventInfo in ipairs(currentDifficultyInfo) do
             window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10), string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id)
         end
+        local tipLine, tipCol = window:AddLine("&nbsp")
+        window:SetCell(tipLine, 1, total_fmt_String:format(difficultyName, #currentDifficultyInfo), nil, "RIGHT")
     end
 end
 
@@ -139,3 +143,38 @@ FriendsFrame:HookScript(
         end
     end
 )
+
+if RaidInfoFrame_Update then
+    local old_RaidInfoFrame_Update = RaidInfoFrame_Update --just in case....
+
+    --Fix Blizzard Bug with entry 10 and 2 overlapping each other.
+    RaidInfoInstance10:SetPoint("TOPLEFT", RaidInfoInstance9, "BOTTOMLEFT")
+
+    function RaidInfoFrame_Update()
+        local savedInstances = GetNumSavedInstances()
+        local instanceName, instanceID, instanceReset
+        if (savedInstances > 0) then
+            --RaidInfoScrollFrameScrollUpButton:SetPoint("BOTTOM", RaidInfoScrollFrame, "TOP", 0, 16);
+            for i = 1, MAX_RAID_INFOS do
+                if (i <= savedInstances) then
+                    if getglobal("RaidInfoInstance" .. i) then
+                        instanceName, instanceID, instanceReset = GetSavedInstanceInfo(i)
+                        getglobal("RaidInfoInstance" .. i .. "Name"):SetText(instanceName)
+                        getglobal("RaidInfoInstance" .. i .. "ID"):SetText(instanceID)
+                        getglobal("RaidInfoInstance" .. i .. "Reset"):SetText(RESETS_IN .. " " .. SecondsToTime(instanceReset))
+                        getglobal("RaidInfoInstance" .. i):Show()
+                    end
+                else
+                    getglobal("RaidInfoInstance" .. i):Hide()
+                end
+            end
+            if (savedInstances > 4) then
+                RaidInfoScrollFrameScrollBar:Show()
+                RaidInfoScrollFrameScrollBar:SetPoint("TOPLEFT", RaidInfoScrollFrame, "TOPRIGHT", 8, -3)
+            else
+                RaidInfoScrollFrameScrollBar:Hide()
+            end
+            RaidInfoScrollFrame:UpdateScrollChildRect()
+        end
+    end
+end
