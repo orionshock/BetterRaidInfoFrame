@@ -144,7 +144,7 @@ FriendsFrame:HookScript(
     end
 )
 
-if RaidInfoFrame_Update then
+if RaidInfoFrame_Update and (not RaidInfoInstance1Difficulty) then
     local old_RaidInfoFrame_Update = RaidInfoFrame_Update --just in case....
 
     --Fix Blizzard Bug with entry 10 and 2 overlapping each other.
