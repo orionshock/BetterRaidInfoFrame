@@ -144,7 +144,7 @@ FriendsFrame:HookScript(
     end
 )
 
-if RaidInfoFrame_Update and (not RaidInfoInstance1Difficulty) then
+if RaidInfoFrame_Update then
     local old_RaidInfoFrame_Update = RaidInfoFrame_Update --just in case....
 
     --Fix Blizzard Bug with entry 10 and 2 overlapping each other.
@@ -152,27 +152,53 @@ if RaidInfoFrame_Update and (not RaidInfoInstance1Difficulty) then
 
     function RaidInfoFrame_Update()
         local savedInstances = GetNumSavedInstances()
-        local instanceName, instanceID, instanceReset
+        local instanceName, instanceID, instanceReset, instanceDifficulty
         if (savedInstances > 0) then
             --RaidInfoScrollFrameScrollUpButton:SetPoint("BOTTOM", RaidInfoScrollFrame, "TOP", 0, 16);
             for i = 1, MAX_RAID_INFOS do
-                if (i <= savedInstances) then
-                    if getglobal("RaidInfoInstance" .. i) then
-                        instanceName, instanceID, instanceReset = GetSavedInstanceInfo(i)
-                        getglobal("RaidInfoInstance" .. i .. "Name"):SetText(instanceName)
-                        getglobal("RaidInfoInstance" .. i .. "ID"):SetText(instanceID)
-                        getglobal("RaidInfoInstance" .. i .. "Reset"):SetText(RESETS_IN .. " " .. SecondsToTime(instanceReset))
-                        getglobal("RaidInfoInstance" .. i):Show()
-                    end
+                if (i <= savedInstances) and getglobal("RaidInfoInstance" .. i) then
+                    instanceName, instanceID, instanceReset, _, _, _, _, _, _, instanceDifficulty = GetSavedInstanceInfo(i)
+                    getglobal("RaidInfoInstance" .. i .. "Name"):SetText(instanceName)
+                    getglobal("RaidInfoInstance" .. i .. "Difficulty"):SetText(instanceDifficulty)
+                    getglobal("RaidInfoInstance" .. i .. "ID"):SetText(instanceID)
+                    getglobal("RaidInfoInstance" .. i .. "Reset"):SetText(SecondsToTime(instanceReset, true, nil, 3))
+                    getglobal("RaidInfoInstance" .. i):Show()
                 else
-                    getglobal("RaidInfoInstance" .. i):Hide()
+                    if getglobal("RaidInfoInstance" .. i) then
+                        getglobal("RaidInfoInstance" .. i):Hide()
+                    end
                 end
             end
             if (savedInstances > 4) then
                 RaidInfoScrollFrameScrollBar:Show()
-                RaidInfoScrollFrameScrollBar:SetPoint("TOPLEFT", RaidInfoScrollFrame, "TOPRIGHT", 8, -3)
+                RaidInfoScrollFrameTop:Show()
+                RaidInfoScrollFrameBottom:Show()
+
+                RaidInfoScrollFrame:SetWidth(295)
+                RaidInfoInstanceLabel:SetWidth(150)
+                RaidInfoIDLabel:SetWidth(150)
+
+                for i = 1, savedInstances do
+                    if getglobal("RaidInfoInstance" .. i) then
+                        getglobal("RaidInfoInstance" .. i):SetWidth(295)
+                    end
+                end
+
+                RaidInfoScrollFrameScrollBar:SetPoint("TOPLEFT", RaidInfoScrollFrame, "TOPRIGHT", 6, -16)
             else
                 RaidInfoScrollFrameScrollBar:Hide()
+                RaidInfoScrollFrameTop:Hide()
+                RaidInfoScrollFrameBottom:Hide()
+
+                RaidInfoScrollFrame:SetWidth(315)
+                RaidInfoInstanceLabel:SetWidth(160)
+                RaidInfoIDLabel:SetWidth(160)
+
+                for i = 1, savedInstances do
+                    if getglobal("RaidInfoInstance" .. i) then
+                        getglobal("RaidInfoInstance" .. i):SetWidth(315)
+                    end
+                end
             end
             RaidInfoScrollFrame:UpdateScrollChildRect()
         end
