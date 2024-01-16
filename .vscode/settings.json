@@ -1,0 +1,12 @@
+{
+    "Lua.diagnostics.globals": [
+        "FriendsFrame",
+        "GameFontNormal",
+        "RAID_INFORMATION",
+        "RAID_INFO_DESC",
+        "GameFontHighlightSmall",
+        "INSTANCE",
+        "RESETS_IN",
+        "RaidFrameRaidInfoButton"
+    ]
+}
