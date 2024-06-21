@@ -1,4 +1,4 @@
-## Interface: 30400
+## Interface: 40400
 ## Version: @project-version@
 ## Author: Orionshock#1149
 ## Title: BetterRaidInfoFrame
@@ -8,6 +8,5 @@
 libs\LibStub.lua
 libs\CallbackHandler-1.0.lua
 libs\LibQTip-1.0.lua
-libs\LibDataBroker-1.1.lua
 
 BetterRaidInfoFrame.lua

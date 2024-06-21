@@ -20,6 +20,7 @@ function core:ADDON_LOADED(event, addon)
         core.oldFunc_RaidFrameRaidInfoButton_OnClick = RaidFrameRaidInfoButton:GetScript("OnClick")
         RaidFrameRaidInfoButton:SetScript("OnClick", core.toggleBetterRaidInfoFrame)
         RequestRaidInfo()
+        eventFrame:UnregisterEvent("ADDON_LOADED")
     end
 end
 
@@ -33,17 +34,13 @@ local function instanceSortByNameFunc(a, b)
 end
 local function difficultyNameSortFunc(a, b)
     if (type(a) == "string") and (type(b) == "string") then
-        --Both Strings (unlikely) sort "A" > "B"
-        if strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%a") then
-            --A is String and B is Number - Sort Letters over Numbers
+        if strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%a") then     --Both Strings (unlikely) sort "A" > "B"
             return a < b
-        elseif strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%d") then
-            --A is Number and B is Letter, Sort letters over Numbers
+        elseif strfind(a:sub(1, 1), "%a") and strfind(b:sub(1, 1), "%d") then --A is String and B is Number - Sort Letters over Numbers
             return true
-        elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%a") then
-            --Both are Numbers, sort Low to High
+        elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%a") then --A is Number and B is Letter, Sort letters over Numbers
             return false
-        elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%d") then
+        elseif strfind(a:sub(1, 1), "%d") and strfind(b:sub(1, 1), "%d") then --Both are Numbers, sort Low to High
             return a < b
         end
     end
@@ -55,7 +52,8 @@ function core:UPDATE_INSTANCE_INFO(event)
     wipe(savedInstanceInfo)
     wipe(savedInstance_TopLevelGroups)
     for i = 1, GetNumSavedInstances() do
-        local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled = GetSavedInstanceInfo(i)
+        local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled =
+            GetSavedInstanceInfo(i)
         if name then
             savedInstanceInfo[difficultyName] = savedInstanceInfo[difficultyName] or {}
             table.insert(
@@ -101,7 +99,8 @@ local function populateTooltip(window)
             window:AddSeparator()
         end
         for dIndex, eventInfo in ipairs(currentDifficultyInfo) do
-            window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10), string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id)
+            window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10),
+                string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id)
         end
         local tipLine, tipCol = window:AddLine("&nbsp")
         window:SetCell(tipLine, 1, total_fmt_String:format(difficultyName, #currentDifficultyInfo), nil, "RIGHT")
