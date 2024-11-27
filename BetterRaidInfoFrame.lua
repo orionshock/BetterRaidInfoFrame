@@ -82,6 +82,7 @@ local function closeWindow()
 end
 
 local total_fmt_String = "%s Total: %d"
+local emptyFuncToMakeItHighlight = function() end
 
 local function populateTooltip(window)
     window:SetHeaderFont(GameFontNormal)
@@ -99,8 +100,9 @@ local function populateTooltip(window)
             window:AddSeparator()
         end
         for dIndex, eventInfo in ipairs(currentDifficultyInfo) do
-            window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10),
-                string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id)
+            local lineNum = window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10),
+                string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id )
+            window:SetLineScript(lineNum, "OnEnter", emptyFuncToMakeItHighlight)
         end
         local tipLine, tipCol = window:AddLine("&nbsp")
         window:SetCell(tipLine, 1, total_fmt_String:format(difficultyName, #currentDifficultyInfo), nil, "RIGHT")
