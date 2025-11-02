@@ -51,9 +51,9 @@ end
 function core:UPDATE_INSTANCE_INFO(event)
     wipe(savedInstanceInfo)
     wipe(savedInstance_TopLevelGroups)
-    for i = 1, GetNumSavedInstances() do
+    for raidIndex = 1, GetNumSavedInstances() do
         local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled =
-            GetSavedInstanceInfo(i)
+            GetSavedInstanceInfo(raidIndex)
         if name then
             savedInstanceInfo[difficultyName] = savedInstanceInfo[difficultyName] or {}
             table.insert(
@@ -64,7 +64,8 @@ function core:UPDATE_INSTANCE_INFO(event)
                     ["id"] = id,
                     ["reset"] = reset,
                     ["encounterProgress"] = encounterProgress,
-                    ["numEncounters"] = numEncounters
+                    ["numEncounters"] = numEncounters,
+                    ["raidIndex"] = raidIndex,
                 }
             )
         end
@@ -82,7 +83,29 @@ local function closeWindow()
 end
 
 local total_fmt_String = "%s Total: %d"
-local emptyFuncToMakeItHighlight = function() end
+local raidInstance_OnHover = function(frame, raidIndex, ...)
+    local raidName, raidID, _, _, _, _, _, _, _, _, numBosses = GetSavedInstanceInfo(raidIndex);
+
+    if not raidID or not raidName or not raidIndex then
+        return
+    end
+
+    GameTooltip:SetOwner(frame, "ANCHOR_RIGHT");
+
+    GameTooltip:AddLine(string.format(INSTANCE_LOCK_SS, UnitName("player"), raidName));
+
+    for i = 1, numBosses do
+        local bossName, _, isKilled = GetSavedInstanceEncounterInfo(raidIndex, i);
+        if isKilled then
+            GameTooltip:AddDoubleLine(bossName, BOSS_DEAD, 1, 1, 1, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
+        else
+            GameTooltip:AddDoubleLine(bossName, BOSS_ALIVE, 1, 1, 1, GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g,
+                GREEN_FONT_COLOR.b);
+        end
+    end
+
+    GameTooltip:Show();
+end
 
 local function populateTooltip(window)
     window:SetHeaderFont(GameFontNormal)
@@ -101,11 +124,11 @@ local function populateTooltip(window)
         end
         for dIndex, eventInfo in ipairs(currentDifficultyInfo) do
             local lineNum = window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10),
-                string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id )
-            window:SetLineScript(lineNum, "OnEnter", emptyFuncToMakeItHighlight)
+                string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id)
+            window:SetLineScript(lineNum, "OnEnter", raidInstance_OnHover, eventInfo.raidIndex)
         end
         local tipLine, tipCol = window:AddLine("&nbsp")
-        window:SetCell(tipLine, 1, total_fmt_String:format(difficultyName, #currentDifficultyInfo), nil, "RIGHT")
+        window:SetCell(tipLine, 1, total_fmt_String:format(difficultyName, #currentDifficultyInfo), "RIGHT")
     end
 end
 
