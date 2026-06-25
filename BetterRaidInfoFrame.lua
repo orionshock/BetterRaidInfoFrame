@@ -52,9 +52,10 @@ function core:UPDATE_INSTANCE_INFO(event)
     wipe(savedInstanceInfo)
     wipe(savedInstance_TopLevelGroups)
     for raidIndex = 1, GetNumSavedInstances() do
-        local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled =
+        local name, id, reset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress =
             GetSavedInstanceInfo(raidIndex)
         if name then
+            difficultyName = difficultyName or UNKNOWN
             savedInstanceInfo[difficultyName] = savedInstanceInfo[difficultyName] or {}
             table.insert(
                 savedInstanceInfo[difficultyName],
@@ -78,8 +79,10 @@ function core:UPDATE_INSTANCE_INFO(event)
 end
 
 local function closeWindow()
-    betterRaidInfoQTip:Release()
-    betterRaidInfoQTip = nil
+    if betterRaidInfoQTip then
+        betterRaidInfoQTip:Release()
+        betterRaidInfoQTip = nil
+    end
 end
 
 local total_fmt_String = "%s Total: %d"
@@ -150,7 +153,9 @@ end
 
 function core.toggleBetterRaidInfoFrame(frame, button, ...)
     if IsShiftKeyDown() then
-        core.oldFunc_RaidFrameRaidInfoButton_OnClick(frame, button, ...)
+        if core.oldFunc_RaidFrameRaidInfoButton_OnClick then
+            core.oldFunc_RaidFrameRaidInfoButton_OnClick(frame, button, ...)
+        end
         return
     end
     if not betterRaidInfoQTip then
