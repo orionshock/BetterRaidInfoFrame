@@ -1,4 +1,4 @@
-## Interface: 50502
+## Interface: 120007
 ## Version: @project-version@
 ## Author: Orionshock#1149
 ## Title: BetterRaidInfoFrame
