@@ -126,6 +126,7 @@ local function populateTooltip(window)
             local lineNum = window:AddLine(eventInfo.name, eventInfo.difficultyName, SecondsToTime(eventInfo.reset or 10),
                 string.join("/", eventInfo.encounterProgress or "?", eventInfo.numEncounters or "?"), eventInfo.id)
             window:SetLineScript(lineNum, "OnEnter", raidInstance_OnHover, eventInfo.raidIndex)
+            window:SetLineScript(lineNum, "OnLeave", GameTooltip_Hide)
         end
         local tipLine, tipCol = window:AddLine("&nbsp")
         window:SetCell(tipLine, 1, total_fmt_String:format(difficultyName, #currentDifficultyInfo), "RIGHT")
